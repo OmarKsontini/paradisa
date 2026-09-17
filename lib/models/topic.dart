@@ -1,15 +1,22 @@
 class Topic {
-  final String id;
-  final String subjectId;
+  final int id;
+  final int subjectId;
   final String title;
   final String description;
-  final int questionCount; 
 
   const Topic({
     required this.id,
     required this.subjectId,
     required this.title,
     required this.description,
-    required this.questionCount,
   });
+
+  factory Topic.fromJson(Map<String, dynamic> json) {
+    return Topic(
+      id: json['id'],
+      subjectId: json['subject_id'],
+      title: json['title'],
+      description: json['description'],
+    );
+  }
 }

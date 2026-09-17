@@ -5,70 +5,90 @@ import '../../../theme/app_theme.dart';
 class SubjectCard extends StatelessWidget {
   final Subject subject;
   final VoidCallback onTap;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+  final VoidCallback onArchive;
 
   const SubjectCard({
     super.key,
     required this.subject,
     required this.onTap,
+    required this.onEdit,
+    required this.onDelete,
+    required this.onArchive,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          color: AppTheme.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppTheme.surfaceLight, width: 1),
-        ),
+        padding: const EdgeInsets.all(AppTheme.space16),
+        decoration: AppTheme.cardDecoration(accentGlow: subject.color),
         child: Row(
           children: [
             Container(
-              width: 56,
-              height: 56,
+              width: 52,
+              height: 52,
               decoration: BoxDecoration(
-                color: subject.color.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(16),
+                color: subject.color.withOpacity(0.16),
+                borderRadius: BorderRadius.circular(AppTheme.radiusSmall + 4),
               ),
-              child: Icon(subject.icon, color: subject.color, size: 28),
+              child: Icon(subject.icon, color: subject.color, size: 26),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: AppTheme.space16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    subject.name,
-                    style: const TextStyle(
-                      color: AppTheme.textPrimary,
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
+                  Text(subject.name, style: Theme.of(context).textTheme.titleMedium),
+                  const SizedBox(height: 3),
                   Text(
                     subject.description,
-                    style: const TextStyle(
-                      color: AppTheme.textSecondary,
-                      fontSize: 13,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${subject.topicCount} topics',
-                    style: TextStyle(
-                      color: subject.color,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: AppTheme.textSecondary),
+            PopupMenuButton<String>(
+              icon: const Icon(Icons.more_vert, color: AppTheme.textMuted, size: 20),
+              color: AppTheme.surfaceElevated,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusSmall)),
+              onSelected: (value) {
+                if (value == 'edit') onEdit();
+                if (value == 'delete') onDelete();
+                if (value == 'archive') onArchive();
+              },
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'archive',
+                  child: Row(children: [
+                    Icon(Icons.check_circle_outline, size: 18, color: AppTheme.success),
+                    SizedBox(width: 10),
+                    Text('Mark as done'),
+                  ]),
+                ),
+                const PopupMenuItem(
+                  value: 'edit',
+                  child: Row(children: [
+                    Icon(Icons.edit_outlined, size: 18, color: AppTheme.textSecondary),
+                    SizedBox(width: 10),
+                    Text('Edit'),
+                  ]),
+                ),
+                const PopupMenuItem(
+                  value: 'delete',
+                  child: Row(children: [
+                    Icon(Icons.delete_outline, size: 18, color: AppTheme.error),
+                    SizedBox(width: 10),
+                    Text('Delete'),
+                  ]),
+                ),
+              ],
+            ),
           ],
         ),
       ),
